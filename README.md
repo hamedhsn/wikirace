@@ -3,12 +3,14 @@ How to install it:
 
  2) go to clone folder
 
- 3) install: `sudo pip/pip3 install .`
+ 3) install: `sudo pip/pip3 -e install .`
 
 How to run it:
  1) Run consumer:
        `Python wikirace/run.py`
- Note: you can run multiple instance of the consumer on different processes.
+ 
+ Note: For better response time, run the above on multiple instances of the consumer on different processes to increase parallelism.
+ Use docker swarm or marathon to start many containers.
 
  2) Start the web service:
         `Python webservice.py`
