@@ -1,16 +1,18 @@
-Requirements: 
+**Requirements:** 
   1) Fill database connection info in configuration.py
   2) Fill Kafka broker IPs in configuration.py
   3) Create a topic in kafka with a large number of partition
 
-How to install it:
+
+**How to install it:**
  1) clone repository
 
  2) go to clone folder
 
  3) install: `sudo pip/pip3 -e install .`
 
-How to run it:
+
+**How to run it:**
  1) Run consumer:
        `Python wikirace/run.py`
  
@@ -21,4 +23,4 @@ How to run it:
         `Python webservice.py`
 
 
-Note: For Architecture and documentation look at the doc folder.
+**Note:** For Architecture and documentation look at the doc folder.
