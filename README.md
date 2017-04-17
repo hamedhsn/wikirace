@@ -24,4 +24,5 @@
 
 
 **Note:** For Architecture and documentation look at the doc folder.
+
 **Note:** The code is tested with Python3. 
