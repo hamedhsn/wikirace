@@ -123,7 +123,7 @@ def run():
 
     for msg in cons.consume():
         found = False
-        print(len(msg['parent']))
+        print('Depth level:{}'.format(len(msg['parent'])))
 
         # Check if we already processed this combination
         if exists(bf, msg['src'], msg['dst']):
