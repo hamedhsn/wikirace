@@ -1,0 +1,3 @@
+pykafka
+pymongo>=3.2.1
+
