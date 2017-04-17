@@ -20,7 +20,7 @@
  Use docker swarm or marathon to start many containers.
 
  2) Start the web service:
-        `Python webservice.py`
+        `Python wikirace/webservice.py`
 
 
 **Note:** For Architecture and documentation look at the doc folder.
