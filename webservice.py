@@ -5,7 +5,7 @@ from flask import Flask
 from flask_restful import reqparse, Api, Resource
 
 from wikirace.configuration import OUTPUT_COLNM, DMN, INGESTION_TOPIC
-from wikirace.reader import make_tmplt
+from wikirace.run import make_tmplt
 from wikirace.utils.kfkpywrapper import KfkProducer
 from wikirace.utils.mongo import mongo_connect
 from wikirace.utils.string import hash_str
@@ -25,9 +25,12 @@ class WebServiceInfo(Resource):
 
 class WikiService(Resource):
     def query_wikidb(self, fr, to):
-        # fr = '{}/{}/{}'.format(DMN, 'wiki', fr)
-        # to = '{}/{}/{}'.format(DMN, 'wiki', to)
+        """ query db for result / wait if it does not exists
 
+        :param fr: from
+        :param to: to
+        :return:
+        """
         _id = hash_str('{}||{}'.format(fr, to))
         q = {'_id': _id}
 
@@ -35,7 +38,6 @@ class WikiService(Resource):
             res = dbcon_oput.find_one(q)
 
             if res:
-                print(res['ans'])
                 return res['ans']
 
             logging.info('Please wait..')
@@ -48,15 +50,14 @@ class WikiService(Resource):
         parser.add_argument('to', default=None, type=str)
 
         if not args.fr or not args.to:
-            print('Please pass both fr and to')
-            return 'Please pass both fr and to. example: curl IP:5000/api/v1/wiki?fr=MODEL2&to=test'
+            return 'Please pass both fr and to. example: ' \
+                   'curl IP:5000/api/v1/wiki?fr=MODEL2&to=test'
 
         fr = '{}/{}/{}'.format(DMN, 'wiki', args.fr)
         to = '{}/{}/{}'.format(DMN, 'wiki', args.to)
 
         # submit the request
         entry = make_tmplt(url=fr, dst=to, title=fr)
-        print('pushing')
         prod.produce(entry)
 
         # query result collection
@@ -74,7 +75,6 @@ api.add_resource(WikiService, api_base_url + '/wiki')
 
 if __name__ == '__main__':
     dbcon_oput = mongo_connect(col_nm=OUTPUT_COLNM)
-    # print(dbcon_oput)
 
     logging.info('Successfully loaded the app')
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True, threaded=True)
