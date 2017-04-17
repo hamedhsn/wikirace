@@ -7,6 +7,10 @@ requirements = [
     'pykafka'
 ]
 
+dependency_links = [
+    'git+https://github.com/jaybaird/python-bloomfilter.git',
+]
+
 setup(
     name='wikirace',
     version='1.0.0',
