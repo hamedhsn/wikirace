@@ -16,8 +16,8 @@
  1) Run consumer:
        `Python wikirace/run.py`
  
- Note: For better response time, run the above on multiple instances of the consumer on different processes to increase parallelism.
- Use docker swarm or marathon to start many containers.
+ Note: For better response time, run the above on multiple instances of the consumer using different processes to increase parallelism.
+ Alternatively Use docker swarm or marathon to start many containers. I will add Dockerfile.
 
  2) Start the web service:
         `Python wikirace/webservice.py`
