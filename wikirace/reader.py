@@ -10,27 +10,44 @@ except ImportError:
 
 
 def make_wiki_link(url):
+    """ create the full link by adding wiki domain
+
+    :param url:
+    :return:
+    """
     if url.startswith('/wiki'):
         return '{}{}'.format(DMN, url)
     else:
         return url
 
 
-def make_tmplt(url, title=None, parent=None, dst=None, lnt=0, src=None):
-    tmpl = {
-        # 'url': '{}/{}'.format(DMN, url),
-        'url': make_wiki_link(url),
-        'title': title,
-        'parent': parent if parent else list(),
-        'dst': dst,
-        'lnt': lnt
-    }
-
-    tmpl['src'] = src if src else tmpl['url']
-    return tmpl
+# def make_tmplt(url, title=None, parent=None, dst=None, lnt=0, src=None):
+#     """ make template for json that pushed to kafka
+#
+#     :param url: url
+#     :param title: title
+#     :param parent: a list of dictionary(url and title) used to save the history of links
+#     :param dst: to link
+#     :param src: from link
+#     :return:
+#     """
+#     tmpl = {
+#         'url': make_wiki_link(url),
+#         'title': title,
+#         'parent': parent if parent else list(),
+#         'dst': dst,
+#     }
+#
+#     tmpl['src'] = src if src else tmpl['url']
+#     return tmpl
 
 
 def get_links(url):
+    """ retrieve all wiki links inside a url
+
+    :param url: url to fetch the links
+    :return:
+    """
     print(url)
     try:
         page = urlopen(url)
@@ -40,6 +57,7 @@ def get_links(url):
     soup = BeautifulSoup(page.read())
     links_tmp = soup.findAll("a")
     links = list()
+
     for link in links_tmp:
         if str(link.attrs.get('href')).startswith('/wiki') and not link.attrs.get('class'):
             links.append({

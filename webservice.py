@@ -4,7 +4,9 @@ from time import sleep
 from flask import Flask
 from flask_restful import reqparse, Api, Resource
 
-from wikirace.configuration import OUTPUT_COLNM, DMN
+from wikirace.configuration import OUTPUT_COLNM, DMN, INGESTION_TOPIC
+from wikirace.reader import make_tmplt
+from wikirace.utils.kfkpywrapper import KfkProducer
 from wikirace.utils.mongo import mongo_connect
 from wikirace.utils.string import hash_str
 
@@ -13,6 +15,7 @@ api = Api(app)
 
 # set up request parser
 parser = reqparse.RequestParser()
+prod = KfkProducer(INGESTION_TOPIC)
 
 
 class WebServiceInfo(Resource):
@@ -22,13 +25,11 @@ class WebServiceInfo(Resource):
 
 class WikiService(Resource):
     def query_wikidb(self, fr, to):
-        fr = '{}/{}/{}'.format(DMN, 'wiki', fr)
-        to = '{}/{}/{}'.format(DMN, 'wiki', to)
+        # fr = '{}/{}/{}'.format(DMN, 'wiki', fr)
+        # to = '{}/{}/{}'.format(DMN, 'wiki', to)
 
-        print('NEW', fr, to)
         _id = hash_str('{}||{}'.format(fr, to))
         q = {'_id': _id}
-        print('NEW', q)
 
         while True:
             res = dbcon_oput.find_one(q)
@@ -37,7 +38,7 @@ class WikiService(Resource):
                 print(res['ans'])
                 return res['ans']
 
-            print('Please wait..')
+            logging.info('Please wait..')
             sleep(2)
 
     def get(self):
@@ -50,10 +51,16 @@ class WikiService(Resource):
             print('Please pass both fr and to')
             return 'Please pass both fr and to. example: curl IP:5000/api/v1/wiki?fr=MODEL2&to=test'
 
+        fr = '{}/{}/{}'.format(DMN, 'wiki', args.fr)
+        to = '{}/{}/{}'.format(DMN, 'wiki', args.to)
+
         # submit the request
+        entry = make_tmplt(url=fr, dst=to, title=fr)
+        print('pushing')
+        prod.produce(entry)
 
         # query result collection
-        return self.query_wikidb(args.fr, args.to)
+        return self.query_wikidb(fr, to)
 
 # route resource here
 api_base_url = '/api/v1'
